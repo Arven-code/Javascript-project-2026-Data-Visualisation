@@ -80,4 +80,4 @@ http://localhost:8000/index.html
 
 ## AI use declaration
 
-I used generative AI as assistance for part of the technical debugging, repository structuring, and some code drafting. These generated parts were then reworked, tested, corrected, and integrated into my own project. They do not represent the majority of the work.
+I used generative AI as assistance for part of the technical debugging, repository structuring and some code drafting. These generated parts were then reworked, tested, corrected, and integrated into my own project. They do not represent the majority of the work.
