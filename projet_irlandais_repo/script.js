@@ -3,7 +3,7 @@ const hauteur = 700;
 const marges = 25;
 
 const svg = d3
-.select("body")
+.select("#carte")
 .append("svg")
 .attr("width", largeur)
 .attr("height", hauteur)
@@ -12,19 +12,27 @@ const svg = d3
 const carte = svg.append("g");
 
 const panneau = d3.select("#panneau");
+const message = d3.select("#message");
 
 let details = [];
+let comteSelectionne = "";
+let formes;
 
-d3.csv("data/F8015.20260507T100507.csv").then(function(donnees)
-{
-    details = donnees;
-});
+message
+.append("p")
+.text("Loading map and data...");
 
-d3.json("data/ireland_counties.geojson").then(function(donneesGeo)
+d3.csv("data/F8015.20260507T100507.csv").then(function(donneesDetails)
 {
-    d3.csv("data/F8002.20260507T100546.csv").then(function(donneesCSV)
+    details = donneesDetails;
+
+    d3.json("data/ireland_counties.geojson").then(function(donneesGeo)
     {
-        dessiner(donneesGeo, donneesCSV);
+        d3.csv("data/F8002.20260507T100546.csv").then(function(donneesCSV)
+        {
+            message.html("");
+            dessiner(donneesGeo, donneesCSV);
+        });
     });
 });
 
@@ -34,30 +42,54 @@ function dessiner(donneesGeo, donneesCSV)
     {
         return d["Census Year"] == "2022"
         && d["Sex"] == "Both sexes"
-        && d["Statistic Label"].toLowerCase().indexOf("irish speakers as a percentage of total") != -1;
+        && d["Statistic Label"] == "Irish speakers as a percentage of total"
+        && d["County of Usual Residence"] != "State";
     });
 
-    donnees.forEach(function(d)
+    donneesGeo.features.forEach(function(f)
     {
-        donneesGeo.features.forEach(function(f)
+        f.properties.unite = cleStatistique(nomComteGeo(f.properties));
+        f.properties.nomAffiche = nomAffiche(f.properties.unite);
+        f.properties.valeur = undefined;
+    });
+
+    donneesGeo.features.forEach(function(f)
+    {
+        donnees.forEach(function(d)
         {
-            if(normaliser(f.properties.name) == normaliser(d["County of Usual Residence"]))
+            if(f.properties.unite == cleStatistique(d["County of Usual Residence"]))
             {
                 f.properties.valeur = +d["VALUE"];
             }
         });
     });
 
-    const projection = d3.geoMercator().fitSize([largeur, hauteur], donneesGeo);
-    const pathGenerator = d3.geoPath().projection(projection);
+    const valeurs = donneesGeo.features
+    .map(function(d) { return d.properties.valeur; })
+    .filter(function(d) { return d != undefined && isNaN(d) == false; });
+
+    console.log("Number of rows after filtering:");
+    console.log(donnees.length);
+
+    console.log("Number of matched map shapes:");
+    console.log(valeurs.length);
+
+    console.log("Example GeoJSON properties:");
+    console.log(donneesGeo.features[0].properties);
+
+    const projection = d3.geoMercator()
+    .fitSize([largeur, hauteur], donneesGeo);
+
+    const pathGenerator = d3.geoPath()
+    .projection(projection);
+
+    const minimum = d3.min(valeurs);
+    const maximum = d3.max(valeurs);
 
     const couleur = d3.scaleSequential(d3.interpolateYlGnBu)
-    .domain([
-        d3.min(donneesGeo.features, function(d) { return d.properties.valeur; }),
-        d3.max(donneesGeo.features, function(d) { return d.properties.valeur; })
-    ]);
+    .domain([minimum, maximum]);
 
-    carte
+    formes = carte
     .selectAll("path")
     .data(donneesGeo.features)
     .enter()
@@ -71,54 +103,469 @@ function dessiner(donneesGeo, donneesCSV)
         }
         else
         {
-            return "lightgrey";
+            return "#eeeeee";
         }
     })
     .attr("stroke", "white")
     .attr("stroke-width", 1)
+    .style("cursor", "pointer")
+    .on("mouseover", function(event, d)
+    {
+        d3.select(this)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+    })
+    .on("mouseout", function(event, d)
+    {
+        if(d.properties.unite == comteSelectionne)
+        {
+            d3.select(this)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2.5);
+        }
+        else
+        {
+            d3.select(this)
+            .attr("stroke", "white")
+            .attr("stroke-width", 1);
+        }
+    })
     .on("click", function(event, d)
     {
-        afficherDetails(d.properties.name);
+        comteSelectionne = d.properties.unite;
+
+        afficherDetails(d.properties.unite, d.properties.valeur);
+        mettreEnEvidence(d.properties.unite);
+    });
+
+    ajouterLegende(couleur, minimum, maximum);
+
+    panneau.html("");
+
+    panneau
+    .append("h2")
+    .text("County details");
+
+    panneau
+    .append("p")
+    .text("Click on a county to see more information.");
+}
+
+function mettreEnEvidence(unite)
+{
+    formes
+    .attr("stroke", function(d)
+    {
+        if(d.properties.unite == unite)
+        {
+            return "black";
+        }
+        else
+        {
+            return "white";
+        }
+    })
+    .attr("stroke-width", function(d)
+    {
+        if(d.properties.unite == unite)
+        {
+            return 2.5;
+        }
+        else
+        {
+            return 1;
+        }
     });
 }
 
-function afficherDetails(comte)
+function afficherDetails(unite, valeur)
 {
     const lignes = details.filter(function(d)
     {
         return d["Census Year"] == "2022"
         && d["Sex"] == "Both sexes"
         && d["Age Group"] == "All ages"
-        && normaliser(d["Administrative Counties"]) == normaliser(comte);
+        && d["Frequency of speaking Irish"] == "All Irish speakers"
+        && cleDetails(d["Administrative Counties"]) == unite;
     });
+
+    const resume = additionnerDetails(lignes);
 
     panneau.html("");
 
     panneau
-    .append("h3")
-    .text(comte);
+    .append("h2")
+    .text(nomAffiche(unite));
 
-    if(lignes.length == 0)
+    if(valeur != undefined)
     {
         panneau
         .append("p")
-        .text("No details loaded.");
+        .attr("class", "valeur-principale")
+        .text(valeur.toFixed(1) + "%");
+
+        panneau
+        .append("p")
+        .attr("class", "description-valeur")
+        .text("Irish speakers as a percentage of the total population.");
+    }
+    else
+    {
+        panneau
+        .append("p")
+        .text("No main percentage value found for this area.");
     }
 
-    lignes.forEach(function(d)
+    panneau
+    .append("h3")
+    .text("Ability breakdown");
+
+    if(resume.length == 0)
     {
         panneau
         .append("p")
-        .text(d["Frequency of speaking Irish"] + " | " + d["Level of Irish Spoken"] + " : " + d["VALUE"]);
+        .text("No detailed rows found for this area.");
+    }
+
+    resume.forEach(function(d)
+    {
+        const ligne = panneau
+        .append("div")
+        .attr("class", "ligne-detail");
+
+        ligne
+        .append("span")
+        .attr("class", "nom-detail")
+        .text(d.nom);
+
+        ligne
+        .append("span")
+        .attr("class", "valeur-detail")
+        .text(formatNombre(d.valeur));
     });
+
+    if(unite == "cork" || unite == "limerick" || unite == "waterford")
+    {
+        panneau
+        .append("p")
+        .style("font-size", "12px")
+        .style("margin-top", "14px")
+        .text(nomBase(unite) + " City and " + nomBase(unite) + " County are drawn as separate shapes on the map, but the census percentage is given for them together. The panel therefore gathers them under one statistical unit, so that the interaction follows the data rather than pretending that the boundary line carries a separate value.");
+    }
+
+    if(unite == "tipperary")
+    {
+        panneau
+        .append("p")
+        .style("font-size", "12px")
+        .style("margin-top", "14px")
+        .text("Here, the map preserves the boundary as it appears in the geographic file, but the census value speaks at the level of the combined statistical unit, where North and South are pooled together. I therefore kept the visual outline visible, while making the panel follow the unit actually used by the data.");
+    }
+}
+
+function additionnerDetails(lignes)
+{
+    const ordre = [
+        "Total",
+        "Very well",
+        "Well",
+        "Not well",
+        "not stated"
+    ];
+
+    const resultat = [];
+
+    ordre.forEach(function(nom)
+    {
+        let total = 0;
+        let trouve = false;
+
+        lignes.forEach(function(d)
+        {
+            if(nettoyerNiveau(d["Level of Irish Spoken"]) == nom)
+            {
+                total = total + (+d["VALUE"]);
+                trouve = true;
+            }
+        });
+
+        if(trouve)
+        {
+            resultat.push({
+                nom: nom,
+                valeur: total
+            });
+        }
+    });
+
+    return resultat;
+}
+
+function ajouterLegende(couleur, minimum, maximum)
+{
+    const x = largeur - 220;
+    const y = hauteur - 80;
+    const w = 160;
+    const h = 14;
+
+    const defs = svg.append("defs");
+
+    const gradient = defs
+    .append("linearGradient")
+    .attr("id", "gradient-legende");
+
+    gradient
+    .append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", couleur(minimum));
+
+    gradient
+    .append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", couleur(maximum));
+
+    svg
+    .append("rect")
+    .attr("x", x)
+    .attr("y", y)
+    .attr("width", w)
+    .attr("height", h)
+    .attr("fill", "url(#gradient-legende)")
+    .attr("stroke", "black")
+    .attr("stroke-width", 0.3);
+
+    svg
+    .append("text")
+    .attr("x", x)
+    .attr("y", y - 8)
+    .text("Percentage")
+    .style("font-size", "11px");
+
+    svg
+    .append("text")
+    .attr("x", x)
+    .attr("y", y + 32)
+    .text(minimum.toFixed(1) + "%")
+    .style("font-size", "11px");
+
+    svg
+    .append("text")
+    .attr("x", x + w - 35)
+    .attr("y", y + 32)
+    .text(maximum.toFixed(1) + "%")
+    .style("font-size", "11px");
+}
+
+function nomComteGeo(p)
+{
+    if(p.name != undefined)
+    {
+        return p.name;
+    }
+
+    if(p.NAME != undefined)
+    {
+        return p.NAME;
+    }
+
+    if(p.Name != undefined)
+    {
+        return p.Name;
+    }
+
+    if(p.county != undefined)
+    {
+        return p.county;
+    }
+
+    if(p.COUNTY != undefined)
+    {
+        return p.COUNTY;
+    }
+
+    if(p.COUNTYNAME != undefined)
+    {
+        return p.COUNTYNAME;
+    }
+
+    return "";
+}
+
+function cleStatistique(texte)
+{
+    texte = normaliser(texte);
+
+    if(texte == "cork city" || texte == "cork county" || texte == "cork city and cork county")
+    {
+        return "cork";
+    }
+
+    if(texte == "limerick city" || texte == "limerick county" || texte == "limerick city and county")
+    {
+        return "limerick";
+    }
+
+    if(texte == "waterford city" || texte == "waterford county" || texte == "waterford city and county")
+    {
+        return "waterford";
+    }
+
+    if(texte == "north tipperary" || texte == "south tipperary" || texte == "tipperary")
+    {
+        return "tipperary";
+    }
+
+    texte = texte.replace(" county", "");
+
+    return texte;
+}
+
+function cleDetails(texte)
+{
+    texte = normaliser(texte);
+
+    if(texte == "cork city council" || texte == "cork county council")
+    {
+        return "cork";
+    }
+
+    if(texte == "limerick city and county council")
+    {
+        return "limerick";
+    }
+
+    if(texte == "waterford city and county council")
+    {
+        return "waterford";
+    }
+
+    if(texte == "tipperary county council")
+    {
+        return "tipperary";
+    }
+
+    texte = texte.replace(" county council", "");
+    texte = texte.replace(" city council", " city");
+    texte = texte.replace(" council", "");
+    texte = texte.replace(" county", "");
+
+    return texte;
+}
+
+function nomAffiche(unite)
+{
+    if(unite == "cork")
+    {
+        return "Cork City and Cork County";
+    }
+
+    if(unite == "limerick")
+    {
+        return "Limerick City and County";
+    }
+
+    if(unite == "waterford")
+    {
+        return "Waterford City and County";
+    }
+
+    if(unite == "tipperary")
+    {
+        return "Tipperary (North and South)";
+    }
+
+    if(unite == "dun laoghaire rathdown")
+    {
+        return "Dún Laoghaire-Rathdown";
+    }
+
+    if(unite == "dublin city")
+    {
+        return "Dublin City";
+    }
+
+    if(unite == "south dublin")
+    {
+        return "South Dublin";
+    }
+
+    if(unite == "galway city")
+    {
+        return "Galway City";
+    }
+
+    if(unite == "galway county")
+    {
+        return "Galway County";
+    }
+
+    return mettreMajuscules(unite) + " County";
+}
+
+function nomBase(unite)
+{
+    if(unite == "cork")
+    {
+        return "Cork";
+    }
+
+    if(unite == "limerick")
+    {
+        return "Limerick";
+    }
+
+    if(unite == "waterford")
+    {
+        return "Waterford";
+    }
+
+    return mettreMajuscules(unite);
+}
+
+function nettoyerNiveau(texte)
+{
+    if(texte == undefined)
+    {
+        return "";
+    }
+
+    texte = texte.replace("Speaks Irish - ", "");
+    texte = texte.replace("Ability to speak Irish, ", "");
+
+    return texte;
+}
+
+function formatNombre(nombre)
+{
+    return nombre.toLocaleString("en-IE");
+}
+
+function mettreMajuscules(texte)
+{
+    const mots = texte.split(" ");
+
+    const resultat = mots.map(function(mot)
+    {
+        return mot.charAt(0).toUpperCase() + mot.slice(1);
+    });
+
+    return resultat.join(" ");
 }
 
 function normaliser(texte)
 {
+    if(texte == undefined)
+    {
+        return "";
+    }
+
     return texte
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "and")
     .replace(/-/g, " ")
+    .replace(/,/g, "")
+    .replace(/  +/g, " ")
     .trim();
 }
