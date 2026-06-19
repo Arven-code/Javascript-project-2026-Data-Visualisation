@@ -46,37 +46,14 @@ For the current detail panel, I keep:
 
 ## Pre-processing
 
-The main pre-processing steps are:
+The main pre-processing steps in this work were:
 - filtering the CSV tables to keep only the relevant 2022 rows
-- converting percentage values into numeric values
-- normalising county names in order to match the CSV files with the GeoJSON file
+- converting the percentage values into actual numeric values
+- normalising the county names in order to match the CSV files with the GeoJSON file
 - attaching the values from `F8002` to the county polygons in the GeoJSON
 
 ## Visualisation
-
-### Main visualisation
 The current main visualisation is a county map of Ireland coloured according to the proportion of Irish speakers.
-
-The purpose of this first version is to establish a reliable and readable base map before moving to more experimental rendering.
-
-### Experimental visualisation
-A second version, kept in `script_contours.js`, tests a smoothed contour representation derived from county values.
-
-This second version is still exploratory. The idea is to move away from a purely standard choropleth and test a more continuous spatial surface while keeping the census data as a basis.
-
-## Running the project
-
-Place the three data files in the `data/` folder, then start a local server from the repository folder:
-
-```bash
-python3 -m http.server
-```
-
-Then open:
-
-```text
-http://localhost:8000/index.html
-```
 
 ## AI use declaration
 
