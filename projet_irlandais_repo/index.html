@@ -1,15 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Irish language in Ireland</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <h2>Irish language in Ireland</h2>
-    <p class="intro">Census 2022 data on Irish speakers in Ireland.</p>
-    <div id="panneau">Click a county</div>
+
+    <h1>Irish language in Ireland</h1>
+
+    <p>
+        This map shows Irish speakers as a percentage of the total population,
+        by county, using Census 2022 data.
+    </p>
+
+    <div id="conteneur">
+
+        <div id="carte"></div>
+
+        <div id="panneau">
+            <h2>County details</h2>
+            <p>Click on a county to see more information.</p>
+        </div>
+
+    </div>
+
+    <div id="message"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="script.js"></script>
+
 </body>
 </html>
