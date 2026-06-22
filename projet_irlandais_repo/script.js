@@ -1,6 +1,9 @@
 const largeur = 900;
 const hauteur = 700;
-const marges = 25;
+
+const FICHIER_MAIN = "data/F8002.20260619T220645.csv?v=5";
+const FICHIER_DETAILS = "data/F8015.20260507T100507.csv?v=5";
+const FICHIER_GEOJSON = "data/ireland_counties.geojson?v=5";
 
 const svg = d3
 .select("#carte")
@@ -22,29 +25,62 @@ message
 .append("p")
 .text("Loading map and data...");
 
-d3.csv("data/F8015.20260507T100507.csv").then(function(donneesDetails)
+console.log("MAIN =", FICHIER_MAIN);
+console.log("DETAILS =", FICHIER_DETAILS);
+console.log("GEOJSON =", FICHIER_GEOJSON);
+
+Promise.all([
+    d3.csv(FICHIER_DETAILS),
+    d3.json(FICHIER_GEOJSON),
+    d3.csv(FICHIER_MAIN)
+])
+.then(function([donneesDetails, donneesGeo, donneesCSV])
 {
     details = donneesDetails;
 
-    d3.json("data/ireland_counties.geojson").then(function(donneesGeo)
-    {
-        d3.csv("data/F8002.20260507T100546.csv").then(function(donneesCSV)
-        {
-            message.html("");
-            dessiner(donneesGeo, donneesCSV);
-        });
-    });
+    console.log("F8015 loaded:", donneesDetails.length, "rows");
+    console.log("GeoJSON loaded:", donneesGeo.features ? donneesGeo.features.length : "no features");
+    console.log("F8002 loaded:", donneesCSV.length, "rows");
+
+    message.html("");
+    dessiner(donneesGeo, donneesCSV);
+})
+.catch(function(error)
+{
+    console.error("Loading error:", error);
+    message.html(
+        "<p><strong>Loading error.</strong></p>" +
+        "<p>Check file names and make sure you are using localhost.</p>"
+    );
 });
 
 function dessiner(donneesGeo, donneesCSV)
 {
+    if(!donneesGeo || !donneesGeo.features || !Array.isArray(donneesGeo.features))
+    {
+        message.html("<p><strong>Error:</strong> invalid GeoJSON structure.</p>");
+        return;
+    }
+
     const donnees = donneesCSV.filter(function(d)
     {
-        return d["Census Year"] == "2022"
-        && d["Sex"] == "Both sexes"
-        && d["Statistic Label"] == "Irish speakers as a percentage of total"
-        && d["County of Usual Residence"] != "State";
+        return String(d["Census Year"]).trim() == "2022"
+        && String(d["Sex"]).trim() == "Both sexes"
+        && String(d["Statistic Label"]).trim() == "Irish speakers as a percentage of total"
+        && String(d["County of Usual Residence"]).trim() != "State";
     });
+
+    console.log("Rows after filter:", donnees.length);
+    console.log("Filtered counties:", donnees.map(d => d["County of Usual Residence"]));
+
+    if(donnees.length === 0)
+    {
+        message.html(
+            "<p><strong>Error:</strong> no rows matched the choropleth filter.</p>" +
+            "<p>Check the exact column values in F8002.</p>"
+        );
+        return;
+    }
 
     donneesGeo.features.forEach(function(f)
     {
@@ -68,14 +104,16 @@ function dessiner(donneesGeo, donneesCSV)
     .map(function(d) { return d.properties.valeur; })
     .filter(function(d) { return d != undefined && isNaN(d) == false; });
 
-    console.log("Number of rows after filtering:");
-    console.log(donnees.length);
+    console.log("Matched map shapes:", valeurs.length);
 
-    console.log("Number of matched map shapes:");
-    console.log(valeurs.length);
-
-    console.log("Example GeoJSON properties:");
-    console.log(donneesGeo.features[0].properties);
+    if(valeurs.length === 0)
+    {
+        message.html(
+            "<p><strong>Error:</strong> the data loaded, but no county values matched the GeoJSON names.</p>" +
+            "<p>Open the browser console and check the logged county names.</p>"
+        );
+        return;
+    }
 
     const projection = d3.geoMercator()
     .fitSize([largeur, hauteur], donneesGeo);
@@ -88,6 +126,10 @@ function dessiner(donneesGeo, donneesCSV)
 
     const couleur = d3.scaleSequential(d3.interpolateYlGnBu)
     .domain([minimum, maximum]);
+
+    carte.selectAll("*").remove();
+    svg.selectAll(".legende").remove();
+    svg.selectAll("defs").remove();
 
     formes = carte
     .selectAll("path")
@@ -133,7 +175,6 @@ function dessiner(donneesGeo, donneesCSV)
     .on("click", function(event, d)
     {
         comteSelectionne = d.properties.unite;
-
         afficherDetails(d.properties.unite, d.properties.valeur);
         mettreEnEvidence(d.properties.unite);
     });
@@ -182,10 +223,10 @@ function afficherDetails(unite, valeur)
 {
     const lignes = details.filter(function(d)
     {
-        return d["Census Year"] == "2022"
-        && d["Sex"] == "Both sexes"
-        && d["Age Group"] == "All ages"
-        && d["Frequency of speaking Irish"] == "All Irish speakers"
+        return String(d["Census Year"]).trim() == "2022"
+        && String(d["Sex"]).trim() == "Both sexes"
+        && String(d["Age Group"]).trim() == "All ages"
+        && String(d["Frequency of speaking Irish"]).trim() == "All Irish speakers"
         && cleDetails(d["Administrative Counties"]) == unite;
     });
 
@@ -326,6 +367,7 @@ function ajouterLegende(couleur, minimum, maximum)
 
     svg
     .append("rect")
+    .attr("class", "legende")
     .attr("x", x)
     .attr("y", y)
     .attr("width", w)
@@ -336,6 +378,7 @@ function ajouterLegende(couleur, minimum, maximum)
 
     svg
     .append("text")
+    .attr("class", "legende")
     .attr("x", x)
     .attr("y", y - 8)
     .text("Percentage")
@@ -343,6 +386,7 @@ function ajouterLegende(couleur, minimum, maximum)
 
     svg
     .append("text")
+    .attr("class", "legende")
     .attr("x", x)
     .attr("y", y + 32)
     .text(minimum.toFixed(1) + "%")
@@ -350,6 +394,7 @@ function ajouterLegende(couleur, minimum, maximum)
 
     svg
     .append("text")
+    .attr("class", "legende")
     .attr("x", x + w - 35)
     .attr("y", y + 32)
     .text(maximum.toFixed(1) + "%")
@@ -358,36 +403,12 @@ function ajouterLegende(couleur, minimum, maximum)
 
 function nomComteGeo(p)
 {
-    if(p.name != undefined)
-    {
-        return p.name;
-    }
-
-    if(p.NAME != undefined)
-    {
-        return p.NAME;
-    }
-
-    if(p.Name != undefined)
-    {
-        return p.Name;
-    }
-
-    if(p.county != undefined)
-    {
-        return p.county;
-    }
-
-    if(p.COUNTY != undefined)
-    {
-        return p.COUNTY;
-    }
-
-    if(p.COUNTYNAME != undefined)
-    {
-        return p.COUNTYNAME;
-    }
-
+    if(p.name != undefined) return p.name;
+    if(p.NAME != undefined) return p.NAME;
+    if(p.Name != undefined) return p.Name;
+    if(p.county != undefined) return p.county;
+    if(p.COUNTY != undefined) return p.COUNTY;
+    if(p.COUNTYNAME != undefined) return p.COUNTYNAME;
     return "";
 }
 
@@ -454,80 +475,31 @@ function cleDetails(texte)
 
 function nomAffiche(unite)
 {
-    if(unite == "cork")
-    {
-        return "Cork City and Cork County";
-    }
-
-    if(unite == "limerick")
-    {
-        return "Limerick City and County";
-    }
-
-    if(unite == "waterford")
-    {
-        return "Waterford City and County";
-    }
-
-    if(unite == "tipperary")
-    {
-        return "Tipperary (North and South)";
-    }
-
-    if(unite == "dun laoghaire rathdown")
-    {
-        return "Dún Laoghaire-Rathdown";
-    }
-
-    if(unite == "dublin city")
-    {
-        return "Dublin City";
-    }
-
-    if(unite == "south dublin")
-    {
-        return "South Dublin";
-    }
-
-    if(unite == "galway city")
-    {
-        return "Galway City";
-    }
-
-    if(unite == "galway county")
-    {
-        return "Galway County";
-    }
+    if(unite == "cork") return "Cork City and Cork County";
+    if(unite == "limerick") return "Limerick City and County";
+    if(unite == "waterford") return "Waterford City and County";
+    if(unite == "tipperary") return "Tipperary (North and South)";
+    if(unite == "dun laoghaire rathdown") return "Dún Laoghaire-Rathdown";
+    if(unite == "dublin city") return "Dublin City";
+    if(unite == "south dublin") return "South Dublin";
+    if(unite == "galway city") return "Galway City";
+    if(unite == "galway county") return "Galway County";
 
     return mettreMajuscules(unite) + " County";
 }
 
 function nomBase(unite)
 {
-    if(unite == "cork")
-    {
-        return "Cork";
-    }
-
-    if(unite == "limerick")
-    {
-        return "Limerick";
-    }
-
-    if(unite == "waterford")
-    {
-        return "Waterford";
-    }
+    if(unite == "cork") return "Cork";
+    if(unite == "limerick") return "Limerick";
+    if(unite == "waterford") return "Waterford";
 
     return mettreMajuscules(unite);
 }
 
 function nettoyerNiveau(texte)
 {
-    if(texte == undefined)
-    {
-        return "";
-    }
+    if(texte == undefined) return "";
 
     texte = texte.replace("Speaks Irish - ", "");
     texte = texte.replace("Ability to speak Irish, ", "");
@@ -554,12 +526,9 @@ function mettreMajuscules(texte)
 
 function normaliser(texte)
 {
-    if(texte == undefined)
-    {
-        return "";
-    }
+    if(texte == undefined) return "";
 
-    return texte
+    return String(texte)
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
