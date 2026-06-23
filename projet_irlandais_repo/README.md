@@ -149,7 +149,7 @@ The final visualisation is a county-level choropleth map. This choice is directl
 
 The scale is sequential because the selected variable is quantitative. The values form an ordered range, from lower to higher percentages of Irish speakers. This is why I did not use separate categorical colours. The map is not asking the reader to distinguish arbitrary groups. It asks the reader to see variation along one continuous measure.
 
-The county borders remain visible, but they are kept visually secondary. They are needed because the data are attached to territorial units. Without them, the reader would not know which area is being interpreted, but at the same time, the border should not become more important than the value. This was also one of the reasons for keeping the final map relatively simple. T
+The county borders remain visible, but they are kept visually secondary. They are needed because the data are attached to territorial units. Without them, the reader would not know which area is being interpreted, but at the same time, the border should not become more important than the value. This was also one of the reasons for keeping the final map relatively simple. 
 
 Krum's study is helpful since the final interface depends on keeping the whole reading situation visible. A reader should be normally able to see the map, the legend and the selected-county panel without losing the relation between them. Krum argues that data visualisation can make comparison easier when the relevant information is placed in the same field of view and can be understood quickly (Krum 2014:4). In this project, that principle explains why the side panel is placed beside the map rather than separated from it.
 
