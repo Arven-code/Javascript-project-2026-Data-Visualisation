@@ -1,9 +1,13 @@
 const largeur = 900;
 const hauteur = 700;
 
-const FICHIER_MAIN = "data/F8002.20260619T220645.csv?v=5";
-const FICHIER_DETAILS = "data/F8015.20260507T100507.csv?v=5";
-const FICHIER_GEOJSON = "data/ireland_counties.geojson?v=5";
+const FICHIER_MAIN = "data/F8002.20260619T220645.csv?v=7";
+const FICHIER_DETAILS = "data/F8015.20260507T100507.csv?v=7";
+const FICHIER_GEOJSON = "data/ireland_counties.geojson?v=7";
+
+const OPACITE_NORMALE = 1;
+const OPACITE_SURVOL = 0.78;
+const OPACITE_SELECTION = 0.72;
 
 const svg = d3
 .select("#carte")
@@ -150,26 +154,27 @@ function dessiner(donneesGeo, donneesCSV)
     })
     .attr("stroke", "white")
     .attr("stroke-width", 1)
+    .attr("fill-opacity", OPACITE_NORMALE)
     .style("cursor", "pointer")
     .on("mouseover", function(event, d)
     {
-        d3.select(this)
-        .attr("stroke", "black")
-        .attr("stroke-width", 2);
+        if(d.properties.unite != comteSelectionne)
+        {
+            d3.select(this)
+            .attr("fill-opacity", OPACITE_SURVOL);
+        }
     })
     .on("mouseout", function(event, d)
     {
         if(d.properties.unite == comteSelectionne)
         {
             d3.select(this)
-            .attr("stroke", "black")
-            .attr("stroke-width", 2.5);
+            .attr("fill-opacity", OPACITE_SELECTION);
         }
         else
         {
             d3.select(this)
-            .attr("stroke", "white")
-            .attr("stroke-width", 1);
+            .attr("fill-opacity", OPACITE_NORMALE);
         }
     })
     .on("click", function(event, d)
@@ -195,26 +200,15 @@ function dessiner(donneesGeo, donneesCSV)
 function mettreEnEvidence(unite)
 {
     formes
-    .attr("stroke", function(d)
+    .attr("fill-opacity", function(d)
     {
         if(d.properties.unite == unite)
         {
-            return "black";
+            return OPACITE_SELECTION;
         }
         else
         {
-            return "white";
-        }
-    })
-    .attr("stroke-width", function(d)
-    {
-        if(d.properties.unite == unite)
-        {
-            return 2.5;
-        }
-        else
-        {
-            return 1;
+            return OPACITE_NORMALE;
         }
     });
 }
