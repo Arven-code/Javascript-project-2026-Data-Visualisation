@@ -179,7 +179,7 @@ Finally, the visualisation is limited by its own clarity. A good map must simpli
 
 ## 11. Generative AI declaration
 
-Generative AI was used as a support tool during the project, mainly to help with debugging and with HTML, CSS and D3 code, which were more unfamiliar to me. AI assistance was useful in correcting specific technical problems, especially the D3 layout, the click interaction, the hover behaviour, and the matching between county names in the CSV and GeoJSON files. These generated or assisted code sections were tested locally and adjusted during the project. They do not represent the majority of the work.
+Generative AI was used as a support tool during the project, mainly to help with debugging and with HTML, CSS and D3 code, which were more unfamiliar to me. AI assistance was useful in correcting specific technical problems, especially the click interaction, the hover behaviour, and the matching between county names in the CSV and GeoJSON files. These generated or assisted code sections were tested locally and adjusted during the project. They do not represent the majority of the work.
 
 ## 12. Sources
 
