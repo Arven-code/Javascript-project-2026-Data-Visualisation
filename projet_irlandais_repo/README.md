@@ -10,7 +10,7 @@ The project is therefore positioned between a linguistic question and a visual o
 
 ## 2. Final visualisation
 
-[Irish language in Ireland.pdf](https://github.com/user-attachments/files/29258932/Irish.language.in.Ireland.pdf)
+<img width="2339" height="1653" alt="irish_language_map" src="https://github.com/user-attachments/assets/eec48342-5bf4-4e5a-8287-a04beca0998e" />
 
 *Figure 1. Final interface of the county-level choropleth map, showing Irish speakers as a percentage of the total population by county-level unit.*
 
