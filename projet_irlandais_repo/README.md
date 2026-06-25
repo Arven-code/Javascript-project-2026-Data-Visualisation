@@ -143,7 +143,7 @@ data/isopleth/electoral_divisions.geojson
 data/isopleth/SAPS_Table_3_1_ED_Irish.csv
 ```
 
-The Electoral Division GeoJSON gives the smaller shapes from which the local values are positioned. The SAPS table gives the census values used by the isopleth. In this case the join is not made through county names, but through the Electoral Division identifier:
+The Electoral Division GeoJSON gives the smaller shapes from which the local values are positioned. The SAPS table gives the census values used by the isopleth. These files come from the web sources used for the isopleth: the CSO/GeoHive Census 2022 Table 3.1 for Irish-language ability by Electoral Division, and the Tailte Éireann/GeoHive CSO Electoral Divisions 2022 boundary layer. In this case the join is not made through county names, but through the Electoral Division identifier:
 
 ```text
 ED_ID_STR
@@ -257,6 +257,10 @@ Generative AI was used as a support tool during the project, mainly to help with
 ## 12. Sources
 
 Central Statistics Office Ireland. *Census of Population 2022 Profile 8 - The Irish Language and Education*.
+
+Central Statistics Office Ireland and Ireland's Census Data Hub. *Table 3.1 - Population aged 3 years and over by ability to speak Irish by Electoral Divisions, Census 2022*. https://census.geohive.ie/datasets/IE-CSO::table-3-1-population-aged-3-years-and-over-by-ability-to-speak-irish-by-electoral-divisions-census-2022/about
+
+Tailte Éireann and GeoHive. *CSO Electoral Divisions - National Statistical Boundaries - 2022 - Ungeneralised*. https://data-osi.opendata.arcgis.com/datasets/osi::cso-electoral-divisions-national-statistical-boundaries-2022-ungeneralised/about
 
 Krum, Randy. *Cool Infographics: Effective Communication with Data Visualization and Design*. Indianapolis, IN: John Wiley & Sons, 2014.
 
