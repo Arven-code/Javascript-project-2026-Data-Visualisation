@@ -44,7 +44,7 @@ http://localhost:8030/index.html?v=7
 To open the Electoral Division isopleth, use:
 
 ```text
-http://localhost:8030/iso/index_iso.html?v=20
+http://localhost:8030/iso/index_iso.html?v=21
 ```
 
 The version suffix is used to reduce browser-cache problems during development. The script also loads the data files with version suffixes.
@@ -257,4 +257,3 @@ Krum, Randy. *Cool Infographics: Effective Communication with Data Visualization
 Mac Giolla Chríost, Diarmait. *Irish in a Global Age*. 2005.
 
 Ó Giollagáin, Conchúr, Seosamh Mac Donnacha, Fiona Ní Chualáin, Aoife Ní Shéaghdha, and Mary O’Brien. *Comprehensive Linguistic Study of the Use of Irish in the Gaeltacht: Principal Findings and Recommendations*. Dublin: The Stationery Office, 2007.
-

@@ -1,8 +1,8 @@
 const largeur = 900;
 const hauteur = 700;
 
-const cheminGeo = "../data/isopleth/electoral_divisions.geojson?v=20";
-const cheminSaps = "../data/isopleth/SAPS_Table_3_1_ED_Irish.csv?v=20";
+const cheminGeo = "../data/isopleth/electoral_divisions.geojson?v=21";
+const cheminSaps = "../data/isopleth/SAPS_Table_3_1_ED_Irish.csv?v=21";
 
 const svg = d3
 .select("#carte")
@@ -20,11 +20,14 @@ const coucheInteractionFond = carte.append("g");
 const coucheSurface = carte.append("g");
 const coucheContours = carte.append("g").style("pointer-events", "none");
 const coucheFrontieres = carte.append("g").style("pointer-events", "none");
+const coucheInteraction = carte.append("g");
 const coucheSelection = carte.append("g").style("pointer-events", "none");
 const coucheLegende = svg.append("g").style("pointer-events", "none");
 const coucheLecture = svg.append("g").style("pointer-events", "none");
 
 const panneau = d3.select("#panneau");
+
+let featureActive = undefined;
 
 Promise.all([
     d3.json(cheminGeo),
@@ -128,7 +131,7 @@ function dessinerCarte(donneesGeo, donneesSaps)
     .attr("stroke", "#eeeeee")
     .attr("stroke-width", 0.08);
 
-    let featureActive = undefined;
+    featureActive = undefined;
 
     coucheInteractionFond
     .append("rect")
@@ -238,6 +241,7 @@ function dessinerCarte(donneesGeo, donneesSaps)
     .attr("stroke-width", 0.9)
     .attr("opacity", 0.75);
 
+    dessinerInteraction(featuresAvecValeur, pathGenerator);
     dessinerLegende(couleur, minGrille, maxGrille);
     initialiserLecture();
     initialiserPanneau();
@@ -248,6 +252,37 @@ function dessinerCarte(donneesGeo, donneesSaps)
         cacherSelection();
         initialiserLecture();
         initialiserPanneau();
+    });
+}
+
+function dessinerInteraction(featuresAvecValeur, pathGenerator)
+{
+    coucheInteraction
+    .selectAll("path")
+    .data(featuresAvecValeur)
+    .enter()
+    .append("path")
+    .attr("d", pathGenerator)
+    .attr("fill", "#ffffff")
+    .attr("fill-opacity", 0)
+    .attr("stroke", "none")
+    .style("pointer-events", "all")
+    .on("mousemove", function(event, feature)
+    {
+        if(feature !== featureActive)
+        {
+            featureActive = feature;
+            afficherSelection(feature, pathGenerator);
+            afficherLecture(feature);
+            afficherDetailsRapides(feature);
+        }
+    })
+    .on("click", function(event, feature)
+    {
+        featureActive = feature;
+        afficherSelection(feature, pathGenerator);
+        afficherLecture(feature);
+        afficherDetailsComplets(feature);
     });
 }
 
