@@ -24,6 +24,10 @@ iso/index_iso.html
 
 This second interface should not be read as a replacement for the choropleth. It is a different way of asking the same spatial question. The choropleth keeps the county-level statistical unit visible. The isopleth moves closer to the Electoral Division data and makes a smoother exploratory surface, while still returning to the original ED value during interaction.
 
+<img width="1440" alt="irish_language_isopleth_map" src="assets/isopleth_map.png" />
+
+*Figure 2. Final interface of the Electoral Division isopleth map, showing the smoothed surface made from the local ED values.*
+
 ## 3. How to run the project
 
 The project should be served through a local Python server. It should not be opened directly with `file://`, because the CSV and GeoJSON files are loaded dynamically by D3.
@@ -31,7 +35,7 @@ The project should be served through a local Python server. It should not be ope
 From the local project folder, run:
 
 ```bash
-cd "/Users/arvendobay/Desktop/Documents/Documents 2026/UNINE/MA/Printemps 2026/Visualisation de données/projet_irlandais_repo"
+cd projet_irlandais_repo
 python3 -m http.server 8030
 ```
 
@@ -44,7 +48,7 @@ http://localhost:8030/index.html?v=7
 To open the Electoral Division isopleth, use:
 
 ```text
-http://localhost:8030/iso/index_iso.html?v=23
+http://localhost:8030/iso/index_iso.html?v=25
 ```
 
 The version suffix is used to reduce browser-cache problems during development. The script also loads the data files with version suffixes.
@@ -57,6 +61,8 @@ projet_irlandais_repo/
 ├── style.css
 ├── script.js
 ├── README.md
+├── assets/
+│   └── isopleth_map.png
 ├── iso/
 │   ├── index_iso.html
 │   ├── style_iso.css
@@ -73,7 +79,7 @@ projet_irlandais_repo/
 
 The file `index.html` contains the structure of the web page, including the title, explanatory text, map container, side panel and script imports. The file `style.css` controls the visual layout of the page, especially the relation between the map and the county detail panel. The file `script.js` contains the D3 logic: loading the files, filtering the rows, matching the county names, drawing the SVG paths, applying the colour scale, handling hover and click interactions, and updating the panel when the user selects a county.
 
-The `iso` folder contains the second visualisation. The file `index_iso.html` gives the separate page for the isopleth map. The file `style_iso.css` keeps the layout close to the main visualisation, with a map on the left and a reading panel on the right. The file `script_iso.js` contains the D3 logic for the Electoral Division map: loading the ED GeoJSON and SAPS table, calculating the percentage of people who can speak Irish, building the interpolated grid, clipping the colour surface to Ireland, drawing contour lines, and updating the SVG reading box and side panel during interaction.
+The `iso` folder contains the second visualisation. The file `index_iso.html` gives the separate page for the isopleth map. The file `style_iso.css` keeps the layout close to the main visualisation, while placing the reading panel below the map so that it remains visible in the browser while the heavier Electoral Division layer loads. The file `script_iso.js` contains the D3 logic for the Electoral Division map: loading the ED GeoJSON and SAPS table, calculating the percentage of people who can speak Irish, building the interpolated grid, clipping the colour surface to Ireland, drawing contour lines, and updating the SVG reading box and side panel during interaction.
 
 ## 5. Data sources
 
@@ -220,7 +226,7 @@ Final addition, the hover effect has been based on opacity. This avoids the prob
 
 The isopleth uses a different visual logic. It does not colour each Electoral Division separately. Instead, it transforms the ED values into a smoothed surface made of small coloured rectangles, clipped to the Irish outline. Contour lines are added above this surface to make the gradient more readable. This makes the map feel less administrative than the choropleth, but it also makes the visualisation more interpretive.
 
-For this reason, the design keeps a fixed reading box inside the SVG. The box does not follow the cursor like a small tooltip, because the map is already visually dense. A stable box is easier to read and avoids adding another moving element over the surface. The side panel also updates on hover and gives more complete details on click. This creates a distinction between the quick reading of the map and the more deliberate reading of a selected Electoral Division.
+For this reason, the design keeps a fixed reading box inside the SVG. The box does not follow the cursor like a small tooltip, because the map is already visually dense. A stable box is easier to read and avoids adding another moving element over the surface. The panel below the map also updates on hover and gives more complete details on click. This creates a distinction between the quick reading of the map and the more deliberate reading of a selected Electoral Division.
 
 ## 9. Reading the map
 
