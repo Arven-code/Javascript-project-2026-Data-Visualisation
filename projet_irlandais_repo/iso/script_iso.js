@@ -1,8 +1,8 @@
 const largeur = 900;
 const hauteur = 700;
 
-const cheminGeo = "../data/isopleth/electoral_divisions.geojson?v=21";
-const cheminSaps = "../data/isopleth/SAPS_Table_3_1_ED_Irish.csv?v=21";
+const cheminGeo = "../data/isopleth/electoral_divisions.geojson?v=22";
+const cheminSaps = "../data/isopleth/SAPS_Table_3_1_ED_Irish.csv?v=22";
 
 const svg = d3
 .select("#carte")

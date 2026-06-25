@@ -44,7 +44,7 @@ http://localhost:8030/index.html?v=7
 To open the Electoral Division isopleth, use:
 
 ```text
-http://localhost:8030/iso/index_iso.html?v=21
+http://localhost:8030/iso/index_iso.html?v=22
 ```
 
 The version suffix is used to reduce browser-cache problems during development. The script also loads the data files with version suffixes.
