@@ -1,0 +1,88 @@
+body
+{
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #ffffff;
+    color: #222222;
+}
+
+h1
+{
+    margin: 22px 30px 5px 30px;
+    font-size: 28px;
+}
+
+.intro
+{
+    margin: 0 30px 15px 30px;
+    max-width: 900px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+#conteneur
+{
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin: 0 30px 30px 30px;
+}
+
+#carte
+{
+    width: 900px;
+}
+
+#carte svg
+{
+    display: block;
+}
+
+#panneau
+{
+    width: 300px;
+    min-width: 300px;
+    min-height: 260px;
+    padding: 16px;
+    margin-top: 20px;
+    border-left: 1px solid #cccccc;
+    background-color: #ffffff;
+    font-size: 14px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+}
+
+#panneau h2
+{
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.valeur-principale
+{
+    font-size: 34px;
+    font-weight: bold;
+    margin: 14px 0;
+}
+
+.ligne-detail
+{
+    margin: 7px 0;
+}
+
+.note
+{
+    margin-top: 18px;
+    font-size: 12px;
+    color: #555555;
+}
+
+.note-carte
+{
+    max-width: 860px;
+    margin: -10px 0 0 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #555555;
+}

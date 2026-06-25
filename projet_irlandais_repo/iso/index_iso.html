@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Irish language in Ireland - Isopleth</title>
+    <link rel="stylesheet" href="style_iso.css?v=20">
+</head>
+<body>
+    <h1>Irish language in Ireland</h1>
+
+    <p class="intro">
+        This exploratory isopleth view smooths the percentage of people aged 3 years and over who reported that they can speak Irish, using Census 2022 Electoral Division data.
+    </p>
+
+    <div id="conteneur">
+        <div>
+            <div id="carte"></div>
+            <p class="note-carte">
+                The colour surface shows smoothed values. Moving over the map gives the original Electoral Division value.
+            </p>
+        </div>
+
+        <div id="panneau"></div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="script_iso.js?v=20"></script>
+</body>
+</html>

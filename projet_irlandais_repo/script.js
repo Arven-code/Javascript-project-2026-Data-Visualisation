@@ -38,8 +38,12 @@ Promise.all([
     d3.json(FICHIER_GEOJSON),
     d3.csv(FICHIER_MAIN)
 ])
-.then(function([donneesDetails, donneesGeo, donneesCSV])
+.then(function(donnees)
 {
+    const donneesDetails = donnees[0];
+    const donneesGeo = donnees[1];
+    const donneesCSV = donnees[2];
+
     details = donneesDetails;
 
     console.log("F8015 loaded:", donneesDetails.length, "rows");
@@ -75,7 +79,10 @@ function dessiner(donneesGeo, donneesCSV)
     });
 
     console.log("Rows after filter:", donnees.length);
-    console.log("Filtered counties:", donnees.map(d => d["County of Usual Residence"]));
+    console.log("Filtered counties:", donnees.map(function(d)
+    {
+        return d["County of Usual Residence"];
+    }));
 
     if(donnees.length === 0)
     {
