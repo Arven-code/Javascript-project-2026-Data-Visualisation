@@ -8,7 +8,7 @@ This project starts from that difficulty. It uses Census 2022 data to produce a 
 
 The project also contains a second map, built at the Electoral Division scale. This second map is an exploratory isopleth. It uses smaller territorial units and then smooths the values into a continuous colour surface. This makes the distribution more local and visually more fluid, but it also makes the question of interpretation more delicate. For that reason, the isopleth keeps the smoothed surface and the original Electoral Division value separate: the colour surface is interpolated, while the reading box and the side panel give the nearest original ED value.
 
-The project is therefore positioned between a linguistic question and a visual one. From the linguistic side, Irish cannot be reduced to one national layer. From the visual side, the maps cannot display everything at once. They have to select, filter, simplify, interpolate in one case, and explain. The purpose of this README is to make those operations visible: where the data came from, how they were prepared, why these visual forms were chosen, and where the limits of the maps remain.
+The project is therefore positioned between a linguistic question and a visual one: from the linguistic side, Irish cannot be reduced to one national layer; from the visual side, the maps cannot display everything at once. They have to select, filter, simplify, interpolate in one case, and explain. The purpose of this README is to make those operations visible: where the data came from, how they were prepared, why these visual forms were chosen, and where the limits of the maps remain.
 
 ## 2. Final visualisations
 
