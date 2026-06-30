@@ -1,3 +1,6 @@
+(
+function()
+{
 const largeur = 900;
 const hauteur = 700;
 
@@ -24,6 +27,9 @@ const message = d3.select("#message");
 let details = [];
 let comteSelectionne = "";
 let formes;
+let isopletheChargee = false;
+
+installerChangementVue();
 
 message
 .append("p")
@@ -539,3 +545,54 @@ function normaliser(texte)
     .replace(/  +/g, " ")
     .trim();
 }
+
+function installerChangementVue()
+{
+    const boutonChoroplethe = d3.select("#bouton_choroplethe");
+    const boutonIsoplethe = d3.select("#bouton_isoplethe");
+
+    if(boutonChoroplethe.empty() || boutonIsoplethe.empty())
+    {
+        return;
+    }
+
+    boutonChoroplethe.on("click", function()
+    {
+        afficherVue("choroplethe");
+    });
+
+    boutonIsoplethe.on("click", function()
+    {
+        afficherVue("isoplethe");
+    });
+}
+
+function afficherVue(nom)
+{
+    const vueChoroplethe = d3.select("#vue_choroplethe");
+    const vueIsoplethe = d3.select("#vue_isoplethe");
+    const boutonChoroplethe = d3.select("#bouton_choroplethe");
+    const boutonIsoplethe = d3.select("#bouton_isoplethe");
+
+    const ouvrirChoroplethe = nom == "choroplethe";
+
+    vueChoroplethe.classed("vue-active", ouvrirChoroplethe);
+    vueIsoplethe.classed("vue-active", !ouvrirChoroplethe);
+    boutonChoroplethe.classed("actif", ouvrirChoroplethe);
+    boutonIsoplethe.classed("actif", !ouvrirChoroplethe);
+
+    if(nom == "isoplethe" && isopletheChargee == false)
+    {
+        chargerIsoplethe();
+    }
+}
+
+function chargerIsoplethe()
+{
+    isopletheChargee = true;
+
+    d3.select("body")
+    .append("script")
+    .attr("src", "iso/script_iso.js?v=24");
+}
+}());

@@ -16,13 +16,13 @@ The project is therefore positioned between a linguistic question and a visual o
 
 *Figure 1. Final interface of the county-level choropleth map, showing Irish speakers as a percentage of the total population by county-level unit.*
 
-The repository also contains the isopleth interface in:
+The same page also contains the isopleth interface. The reader can switch from the county choropleth to the Electoral Division isopleth without opening another HTML file:
 
 ```text
-iso/index_iso.html
+index.html
 ```
 
-This second interface should not be read as a replacement for the choropleth. It is a different way of asking the same spatial question. The choropleth keeps the county-level statistical unit visible. The isopleth moves closer to the Electoral Division data and makes a smoother exploratory surface, while still returning to the original ED value during interaction.
+This second interface should not be read as a replacement for the choropleth. It is a different way of asking the same spatial question. The choropleth keeps the county-level statistical unit visible. The isopleth moves closer to the Electoral Division data and makes a smoother exploratory surface, while still returning to the original ED value during interaction. The separate `iso/index_iso.html` file is kept in the repository as a backup version, but the archived interface is now the switch inside the main page.
 
 <img width="1440" alt="irish_language_isopleth_map" src="assets/isopleth_map.png" />
 
@@ -42,14 +42,10 @@ python3 -m http.server 8030
 Then open:
 
 ```text
-http://localhost:8030/index.html?v=7
+http://localhost:8030/index.html?v=8
 ```
 
-To open the Electoral Division isopleth, use:
-
-```text
-http://localhost:8030/iso/index_iso.html?v=25
-```
+The buttons above the map switch between the county choropleth and the Electoral Division isopleth.
 
 The version suffix is used to reduce browser-cache problems during development. The script also loads the data files with version suffixes.
 
@@ -77,9 +73,9 @@ projet_irlandais_repo/
         └── F8011_clean_wide.csv
 ```
 
-The file `index.html` contains the structure of the web page, including the title, explanatory text, map container, side panel and script imports. The file `style.css` controls the visual layout of the page, especially the relation between the map and the county detail panel. The file `script.js` contains the D3 logic: loading the files, filtering the rows, matching the county names, drawing the SVG paths, applying the colour scale, handling hover and click interactions, and updating the panel when the user selects a county.
+The file `index.html` contains the structure of the web page, including the title, explanatory text, the view switch, the map containers, the panels and the script imports. The file `style.css` controls the visual layout of the page, especially the relation between the map and the county detail panel, and the switch between the choropleth and the isopleth. The file `script.js` contains the D3 logic for the county map: loading the files, filtering the rows, matching the county names, drawing the SVG paths, applying the colour scale, handling hover and click interactions, updating the panel when the user selects a county, and loading the isopleth script when the second view is opened.
 
-The `iso` folder contains the second visualisation. The file `index_iso.html` gives the separate page for the isopleth map. The file `style_iso.css` keeps the layout close to the main visualisation, while placing the reading panel below the map so that it remains visible in the browser while the heavier Electoral Division layer loads. The file `script_iso.js` contains the D3 logic for the Electoral Division map: loading the ED GeoJSON and SAPS table, calculating the percentage of people who can speak Irish, building the interpolated grid, clipping the colour surface to Ireland, drawing contour lines, and updating the SVG reading box and side panel during interaction.
+The `iso` folder contains the second visualisation. The file `index_iso.html` gives a separate backup page for the isopleth map, although the main submitted interface now opens the isopleth from `index.html`. The file `style_iso.css` keeps the layout close to the main visualisation, while placing the reading panel below the map so that it remains visible in the browser while the heavier Electoral Division layer loads. The file `script_iso.js` contains the D3 logic for the Electoral Division map: loading the ED GeoJSON and SAPS table, calculating the percentage of people who can speak Irish, building the interpolated grid, clipping the colour surface to Ireland, drawing contour lines, and updating the SVG reading box and side panel during interaction.
 
 ## 5. Data sources
 

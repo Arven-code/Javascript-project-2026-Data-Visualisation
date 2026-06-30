@@ -11,6 +11,39 @@ p {
     max-width: 900px;
 }
 
+#choix_vue {
+    display: flex;
+    gap: 8px;
+    margin: 18px 0;
+}
+
+.bouton-vue {
+    border: 1px solid black;
+    background-color: white;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.bouton-vue.actif {
+    background-color: black;
+    color: white;
+}
+
+.vue-carte {
+    display: none;
+}
+
+.vue-active {
+    display: block;
+}
+
+.intro-vue {
+    margin-top: 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
 #conteneur {
     display: flex;
     flex-direction: row;
@@ -78,4 +111,65 @@ p {
 #message {
     margin-top: 15px;
     font-size: 13px;
+}
+
+#conteneur_iso {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+#carte_iso {
+    width: 900px;
+}
+
+#carte_iso svg {
+    display: block;
+}
+
+#panneau_iso {
+    width: 900px;
+    max-width: calc(100vw - 50px);
+    min-height: 170px;
+    padding: 16px;
+    margin-top: 0;
+    border-top: 1px solid #cccccc;
+    background-color: #ffffff;
+    font-size: 14px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+}
+
+#panneau_iso h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+#panneau_iso .ligne-detail {
+    display: block;
+    border-bottom: none;
+    padding: 0;
+    margin: 7px 0;
+}
+
+#panneau_iso .valeur-principale {
+    font-size: 34px;
+    font-weight: bold;
+    margin: 14px 0;
+}
+
+#panneau_iso .note {
+    margin-top: 18px;
+    font-size: 12px;
+    color: #555555;
+}
+
+.note-carte {
+    max-width: 860px;
+    margin: -10px 0 0 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #555555;
 }

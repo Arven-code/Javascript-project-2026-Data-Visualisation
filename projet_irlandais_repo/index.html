@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Irish language in Ireland</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=8">
 </head>
 
 <body>
@@ -15,21 +15,45 @@
         by county, using Census 2022 data.
     </p>
 
-    <div id="conteneur">
-
-        <div id="carte"></div>
-
-        <div id="panneau">
-            <h2>County details</h2>
-            <p>Click on a county to see more information.</p>
-        </div>
-
+    <div id="choix_vue">
+        <button id="bouton_choroplethe" class="bouton-vue actif" type="button">County map</button>
+        <button id="bouton_isoplethe" class="bouton-vue" type="button">Isopleth</button>
     </div>
 
-    <div id="message"></div>
+    <div id="vue_choroplethe" class="vue-carte vue-active">
+        <div id="conteneur">
+
+            <div id="carte"></div>
+
+            <div id="panneau">
+                <h2>County details</h2>
+                <p>Click on a county to see more information.</p>
+            </div>
+
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <div id="vue_isoplethe" class="vue-carte">
+        <p class="intro-vue">
+            This exploratory isopleth smooths the percentage of people aged 3 years and over who reported that they can speak Irish, using Census 2022 Electoral Division data.
+        </p>
+
+        <div id="conteneur_iso">
+            <div>
+                <div id="carte_iso"></div>
+                <p class="note-carte">
+                    The colour surface shows smoothed values. Moving over the map gives the original Electoral Division value.
+                </p>
+            </div>
+
+            <div id="panneau_iso"></div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=8"></script>
 
 </body>
 </html>

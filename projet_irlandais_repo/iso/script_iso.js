@@ -1,11 +1,16 @@
+(
+function()
+{
 const largeur = 900;
 const hauteur = 700;
 
-const cheminGeo = "../data/isopleth/electoral_divisions.geojson?v=23";
-const cheminSaps = "../data/isopleth/SAPS_Table_3_1_ED_Irish.csv?v=23";
+const prefixeChemin = window.location.pathname.indexOf("/iso/") != -1 ? "../" : "";
+const cheminGeo = prefixeChemin + "data/isopleth/electoral_divisions.geojson?v=23";
+const cheminSaps = prefixeChemin + "data/isopleth/SAPS_Table_3_1_ED_Irish.csv?v=23";
+const conteneurCarte = d3.select("#carte_iso").empty() ? d3.select("#carte") : d3.select("#carte_iso");
+const panneau = d3.select("#panneau_iso").empty() ? d3.select("#panneau") : d3.select("#panneau_iso");
 
-const svg = d3
-.select("#carte")
+const svg = conteneurCarte
 .append("svg")
 .attr("width", largeur)
 .attr("height", hauteur)
@@ -24,8 +29,6 @@ const coucheInteraction = carte.append("g");
 const coucheSelection = carte.append("g").style("pointer-events", "none");
 const coucheLegende = svg.append("g").style("pointer-events", "none");
 const coucheLecture = svg.append("g").style("pointer-events", "none");
-
-const panneau = d3.select("#panneau");
 
 let featureActive = undefined;
 
@@ -87,7 +90,7 @@ function dessinerCarte(donneesGeo, donneesSaps)
 
     const clip = defs
     .append("clipPath")
-    .attr("id", "clip-irlande")
+    .attr("id", "clip-irlande-iso")
     .attr("clipPathUnits", "userSpaceOnUse");
 
     clip
@@ -161,7 +164,7 @@ function dessinerCarte(donneesGeo, donneesSaps)
     });
 
     coucheSurface
-    .attr("clip-path", "url(#clip-irlande)")
+    .attr("clip-path", "url(#clip-irlande-iso)")
     .selectAll("rect")
     .data(grille.cellules)
     .enter()
@@ -209,7 +212,7 @@ function dessinerCarte(donneesGeo, donneesSaps)
     const contourPath = d3.geoPath(d3.geoIdentity());
 
     coucheContours
-    .attr("clip-path", "url(#clip-irlande)")
+    .attr("clip-path", "url(#clip-irlande-iso)")
     .attr("transform", "scale(" + grille.largeurCellule + "," + grille.hauteurCellule + ")")
     .selectAll("path")
     .data(contours)
@@ -451,7 +454,7 @@ function dessinerLegende(couleur, minValeur, maxValeur)
 
     const gradient = defs
     .append("linearGradient")
-    .attr("id", "gradient-legende")
+    .attr("id", "gradient-legende-iso")
     .attr("x1", "0%")
     .attr("x2", "100%")
     .attr("y1", "0%")
@@ -481,7 +484,7 @@ function dessinerLegende(couleur, minValeur, maxValeur)
     .attr("y", yLegende)
     .attr("width", largeurLegende)
     .attr("height", hauteurLegende)
-    .attr("fill", "url(#gradient-legende)");
+    .attr("fill", "url(#gradient-legende-iso)");
 
     coucheLegende
     .append("text")
@@ -664,3 +667,4 @@ function afficherDetailsComplets(feature)
         "<p class='note'>The colour surface shows smoothed values. This panel gives the original Electoral Division value.</p>"
     );
 }
+}());
