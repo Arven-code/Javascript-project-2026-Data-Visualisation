@@ -42,7 +42,7 @@ python3 -m http.server 8030
 Then open:
 
 ```text
-http://localhost:8030/index.html?v=8
+http://localhost:8030/index.html?v=9
 ```
 
 The buttons above the map switch between the county choropleth and the Electoral Division isopleth.
