@@ -129,6 +129,7 @@ p {
 }
 
 #panneau_iso {
+    order: -1;
     width: 330px;
     flex: 0 0 330px;
     max-height: 650px;
