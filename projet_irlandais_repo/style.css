@@ -115,9 +115,9 @@ p {
 
 #conteneur_iso {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    gap: 10px;
+    gap: 20px;
 }
 
 #carte_iso {
@@ -129,13 +129,13 @@ p {
 }
 
 #panneau_iso {
-    width: 900px;
-    max-width: calc(100vw - 50px);
-    min-height: 170px;
-    padding: 16px;
-    margin-top: 0;
-    border-top: 1px solid #cccccc;
-    background-color: #ffffff;
+    width: 330px;
+    flex: 0 0 330px;
+    max-height: 650px;
+    overflow-y: auto;
+    border: 1px solid black;
+    padding: 15px;
+    background-color: #f7f7f7;
     font-size: 14px;
     line-height: 1.4;
     box-sizing: border-box;
@@ -155,9 +155,9 @@ p {
 }
 
 #panneau_iso .valeur-principale {
-    font-size: 34px;
+    font-size: 24px;
     font-weight: bold;
-    margin: 14px 0;
+    margin-bottom: 0;
 }
 
 #panneau_iso .note {
