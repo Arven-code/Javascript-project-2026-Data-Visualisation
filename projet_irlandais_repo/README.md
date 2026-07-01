@@ -22,7 +22,7 @@ The same page also contains the isopleth interface. The reader can switch from t
 index.html
 ```
 
-This second interface should not be read as a replacement for the choropleth. It is a different way of asking the same spatial question. The choropleth keeps the county-level statistical unit visible. The isopleth moves closer to the Electoral Division data and makes a smoother exploratory surface, while still returning to the original ED value during interaction. The separate `iso/index_iso.html` file is kept in the repository as a backup version, but the archived interface is now the switch inside the main page.
+This second interface should not be read as a replacement for the choropleth. It is a different way of asking the same spatial question. The choropleth keeps the county-level statistical unit visible, whilst the isopleth moves closer to the Electoral Division data and makes a smoother exploratory surface, while still returning to the original ED value during interaction. The separate `iso/index_iso.html` file is kept in the repository as a backup version, but the archived interface is now the switch inside the main page.
 
 <img width="1440" alt="irish_language_isopleth_map" src="assets/isopleth_map.png" />
 
@@ -45,9 +45,7 @@ Then open:
 http://localhost:8030/index.html?v=21
 ```
 
-The buttons above the map switch between the county choropleth and the Electoral Division isopleth.
-
-The version suffix is used to reduce browser-cache problems during development. The script also loads the data files with version suffixes.
+The buttons above the map switch between the County choropleth and the Electoral Division isopleth.
 
 ## 4. Project files
 
@@ -79,7 +77,7 @@ The `iso` folder contains the second visualisation. The file `index_iso.html` gi
 
 ## 5. Data sources
 
-The primary sources of the project are the files from which the map is built. This distinction is important since the map does not begin as an image. It begins as a relation between two kinds of material: a statistical table and a geographic file. The statistical table gives the values to be represented. The geographic file gives the shapes onto which those values can be placed. The visualisation is therefore produced by making these two sources correspond.
+The primary sources of the project are the files from which the map is built. This distinction is important since the map does not begin as an image, but rather as a relation between two kinds of material: a statistical table and a geographic file. The statistical table gives the values to be represented, whilst the geographic file gives the shapes onto which those values can be placed. The visualisation is therefore produced by making these two sources correspond.
 The main statistical source is the Central Statistics Office’s Census of Population 2022 Profile 8 - The Irish Language and Education. From that source, the project uses two downloaded comma-separated values files.
 
 The first file is:
